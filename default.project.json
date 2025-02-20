@@ -1,0 +1,16 @@
+{
+    "name": "Vibez Lightweight",
+    "tree": {
+        "$className": "DataModel",
+
+        "ServerScriptService": {
+            "$ignoreUnknownInstances": true,
+            "VibezLightweight": {
+                "$path": "src",
+                "Packages": {
+                    "$path": "Packages"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,12 @@
+# Project place file
+/Vibez Ranking.rbxlx
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+
+# Luau-LSP Sourcemap
+/sourcemap.json
+
+# Moonwave build folder (If I publish docs)
+/build
