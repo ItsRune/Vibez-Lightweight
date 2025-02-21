@@ -1,5 +1,6 @@
 local Result = require(script.Parent.Packages.Result)
 
+export type Error = string | Result.Result<any, string>
 export type BaseHttpResponse = Result.Result<any, any>
 export type InfoResponse = { success: boolean, message: string }
 export type GroupIdResponse = { success: boolean, GroupId: number }
@@ -9,7 +10,12 @@ export type BlacklistResponse = { success: boolean, data: { [string]: any } }
 export type UserBlacklistResponse = InfoResponse
 
 export type BooleanResponse = boolean
-export type SaveUserActivityResponse = InfoResponse
+export type SaveUserActivityResponse = {
+	detailedLogs: { { timestampLeftAt: number, secondsUserHasSpent: number, messagesUserHasSent: number }? },
+	messagesUserHasSent: number,
+	secondsUserHasSpent: number,
+}
+
 export type FetchUserActivityResponse = {
 	success: boolean,
 	userId: number?,

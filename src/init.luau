@@ -39,7 +39,7 @@ function Vibez.new(apiKey: string): VibezLightweightKind
 	local self = setmetatable({}, Class)
 
 	self._key = apiKey
-	self.requestCaches = {}
+	self.requestCaches = { groupInfo = {} }
 	self.GroupId = self:getGroupId()
 
 	if self.GroupId == -1 then
@@ -112,7 +112,6 @@ end
 ---
 function Class.getGroupId(self: VibezLightweightKind): number
 	if self.GroupId ~= nil and self.GroupId ~= -1 then
-		warn("returned")
 		return self.GroupId
 	end
 
@@ -234,7 +233,7 @@ function Class.Demote(
 	self: VibezLightweightKind,
 	User: Player | string | number,
 	whoCalled: { userName: string, userId: number }?
-): Result.Result<any, string>
+): Definitions.SetRankResponse | Definitions.Error
 	local userId = self:_verifyUser(User, "UserId")
 	local userName = self:_verifyUser(User, "Name")
 
@@ -246,10 +245,13 @@ function Class.Demote(
 	end
 
 	if not tonumber(userId) then
-		return Result.err("Parameter 'userId' must be a valid number.")
+		return {
+			success = false,
+			message = "Parameter 'userId' must be a valid number.",
+		} :: any
 	end
 
-	local _, response: any = self:_sendHttpRequest("/ranking/demote", "post", nil, {
+	local response = self:_sendHttpRequest("/ranking/demote", "post", nil, {
 		userToRank = {
 			userId = tostring(userId),
 			userName = userName,
@@ -258,7 +260,11 @@ function Class.Demote(
 		userId = tostring(userId),
 	})
 
-	return response.Body
+	if response:isErr() then
+		return response
+	end
+
+	return response:unwrap().Body
 end
 
 --[=[
@@ -276,7 +282,7 @@ function Class.Fire(
 	self: VibezLightweightKind,
 	User: Player | string | number,
 	whoCalled: { userName: string, userId: number }?
-): Result.Result<any, string>
+): boolean
 	local userId = self:_verifyUser(User, "UserId")
 	local userName = self:_verifyUser(User, "Name")
 
@@ -288,10 +294,11 @@ function Class.Fire(
 	end
 
 	if not tonumber(userId) then
-		return Result.err("Parameter 'userId' must be a valid number.")
+		-- Parameter 'userId' must be a valid number.
+		return false
 	end
 
-	local _, response: any = self:_sendHttpRequest("/ranking/fire", "post", nil, {
+	local response = self:_sendHttpRequest("/ranking/fire", "post", nil, {
 		userToRank = {
 			userId = tostring(userId),
 			userName = userName,
@@ -300,12 +307,13 @@ function Class.Fire(
 		userId = tostring(userId),
 	})
 
-	return response.Body
+	return response:isOk() and true or false
 end
 
 --[=[
 	Gets a player's or everyone's current activity
 	@param User Player | string | number
+	@param sorted boolean? -- Only when fetching all user activities.
 	@return activityResponse
 
 	@within VibezLightweight
@@ -368,7 +376,10 @@ end
 	@since 0.11.0
 ]=]
 ---
-function Class.removeActivity(self: VibezLightweightKind, User: Player | string | number): Definitions.InfoResponse
+function Class.removeActivity(
+	self: VibezLightweightKind,
+	User: Player | string | number
+): Definitions.SaveUserActivityResponse | Definitions.InfoResponse
 	local userId = self:_verifyUser(User, "UserId") :: number
 	if not userId then
 		return {
@@ -420,7 +431,7 @@ function Class.saveActivity(
 	secondsSpent: number?,
 	messagesSent: (number | { string })?,
 	shouldFetchGroupRank: boolean?
-): Definitions.SaveUserActivityResponse
+): Definitions.SaveUserActivityResponse | Definitions.InfoResponse
 	local userId = self:_verifyUser(User, "UserId") :: number
 	messagesSent = (typeof(messagesSent) == "table") and #messagesSent
 		or (tonumber(messagesSent) ~= nil) and messagesSent
@@ -460,14 +471,18 @@ function Class.saveActivity(
 
 	secondsSpent, messagesSent = tonumber(secondsSpent), tonumber(messagesSent)
 
-	local _, response: any = self:_sendHttpRequest("/activity/save2", "post", nil, {
+	local response = self:_sendHttpRequest("/activity/save2", "post", nil, {
 		userId = userId,
 		userRank = userRank,
 		secondsUserHasSpent = secondsSpent,
 		messagesUserHasSent = messagesSent,
 	})
 
-	return response.Body
+	if response:isErr() then
+		return response:unwrapErr()
+	end
+
+	return response:unwrap().Body
 end
 
 --[=[
