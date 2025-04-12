@@ -1,16 +1,6 @@
 {
-    "name": "Vibez Lightweight",
+    "name": "VibezRanking",
     "tree": {
-        "$className": "DataModel",
-
-        "ServerScriptService": {
-            "$ignoreUnknownInstances": true,
-            "VibezLightweight": {
-                "$path": "src",
-                "Packages": {
-                    "$path": "Packages"
-                }
-            }
-        }
+        "$path": "src"
     }
 }

@@ -1,6 +1,6 @@
 --!strict
 --[=[
-    @class VibezLightweight
+    @class VibezRanking
     A lightweight module to handle all requests sent to https://vibez.dev/
 ]=]
 local GroupService = game:GetService("GroupService")
@@ -25,7 +25,7 @@ export type VibezLightweightKind = typeof(setmetatable({} :: Public, {} :: Priva
 	@ignore
 	@function unpackResult
 	Unpacks a result value into a usable return value.
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 local function unpackResult<T, E>(result: Result.Result<T, E>): T | E
 	return result:isOk() and result:unwrap() or result:unwrapErr()
@@ -33,7 +33,7 @@ end
 
 --[=[
 	Constructor method
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 function Vibez.new(apiKey: string): VibezLightweightKind
 	local self = setmetatable({}, Class)
@@ -53,7 +53,7 @@ end
 
 --[=[
 	Sends an HTTP request with the api key (if a vibez route was determined to be the host).
-	@within VibezLightweight
+	@within VibezRanking
 	@return BaseHttpResponse
 	@private
 ]=]
@@ -108,7 +108,7 @@ end
 	@return number
 
 	@yields
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 ---
 function Class.getGroupId(self: VibezLightweightKind): number
@@ -132,7 +132,7 @@ end
 	@return SetRankResponse
 
 	@yields
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 ---
 function Class.setRank(
@@ -182,7 +182,7 @@ end
 	@return rankResponse
 
 	@yields
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 ---
 function Class.Promote(
@@ -227,7 +227,7 @@ end
 	@return rankResponse
 
 	@yields
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 ---
 function Class.Demote(
@@ -276,7 +276,7 @@ end
 	@return rankResponse
 
 	@yields
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 ---
 function Class.Fire(
@@ -317,7 +317,7 @@ end
 	@param sorted boolean? -- Only when fetching all user activities.
 	@return activityResponse
 
-	@within VibezLightweight
+	@within VibezRanking
 	@since 0.3.0
 ]=]
 ---
@@ -373,7 +373,7 @@ end
 	@return boolean
 
 	@yields
-	@within VibezLightweight
+	@within VibezRanking
 	@since 0.11.0
 ]=]
 ---
@@ -421,7 +421,7 @@ end
 	@return httpResponse
 
 	@yields
-	@within VibezLightweight
+	@within VibezRanking
 	@since 0.3.0
 ]=]
 ---
@@ -493,7 +493,7 @@ end
 	@param blacklistExecutedBy (Player string | number)?
 	@return blacklistResponse
 
-	@within VibezLightweight
+	@within VibezRanking
 	@since 0.6.0
 ]=]
 ---
@@ -538,7 +538,7 @@ end
 	@param userToDelete (Player string | number)
 	@return BlacklistResponse | InfoResponse
 
-	@within VibezLightweight
+	@within VibezRanking
 	@since 0.6.0
 ]=]
 ---
@@ -563,7 +563,7 @@ end
 	@param userId (string | number | Player)?
 	@return BlacklistResponse | UserBlacklistResponse
 
-	@within VibezLightweight
+	@within VibezRanking
 	@since 0.6.0
 ]=]
 ---
@@ -591,7 +591,7 @@ end
 	@param User Player | string | number
 	@return (boolean, string?, string?)
 
-	@within VibezLightweight
+	@within VibezRanking
 	@since 0.6.0
 ]=]
 ---
@@ -624,7 +624,7 @@ end
 
 	@yields
 	@private
-	@within VibezLightweight
+	@within VibezRanking
 	@since 0.1.0
 ]=]
 ---
@@ -692,7 +692,7 @@ end
 	@return number | string | Player
 
 	@private
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 function Class._verifyUser(
 	self: VibezLightweightKind,
@@ -735,7 +735,7 @@ end
 
 	@yields
 	@private
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 ---
 function Class._getUserIdByName(self: VibezLightweightKind, username: string): number
@@ -750,7 +750,7 @@ end
 
 	@yields
 	@private
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 ---
 function Class._getNameById(self: VibezLightweightKind, userId: number): string
@@ -770,7 +770,7 @@ end
 
 	@yields
 	@private
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 ---
 function Class._getRoleIdFromRank(self: VibezLightweightKind, rank: number | string): number?

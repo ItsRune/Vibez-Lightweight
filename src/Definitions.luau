@@ -52,39 +52,39 @@ return nil
 
 --[=[
 	@type errorKind string | Result<any, string>
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 --[=[
 	@type BaseHttpResponse Result<any,any>
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 --[=[
 	@type InfoResponse { success: boolean, message: string }
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 --[=[
 	@type GroupIdResponse number
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 --[=[
 	@type BlacklistResponse { success: boolean, data: { [string]: any } }
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 --[=[
 	@type UserBlacklistResponse { isUserBlacklisted: boolean, success: boolean, [any]: any }
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 --[=[
 	@type SaveUserActivityResponse {detailedLogs: { { timestampLeftAt: number, secondsUserHasSpent: number, messagesUserHasSent: number }? },messagesUserHasSent: number,secondsUserHasSpent: number}
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 --[=[
 	@type FetchUserActivityResponse {success: boolean,userId: number?,secondsUserHasSpent: number,messagesUserHasSent: number,detailedLogs: {{timestampLeftAt: number,secondsUserHasSpent: number,messagesUserHasSent: number}}}
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 --[=[
 	@type SetRankResponse {success: boolean,message: string?,newRank: {id: number,name: string,rank: number,memberCount: number,},oldRank: {id: number,name: string,rank: number,groupInformation: {id: number,name: string,memberCount: number,hasVerifiedBadge: boolean}}}
-	@within VibezLightweight
+	@within VibezRanking
 ]=]
 
 -- Result Implementation
