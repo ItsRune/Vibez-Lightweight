@@ -52,9 +52,10 @@ function Vibez.new(apiKey: string): VibezLightweightKind
 end
 
 --[=[
-    Sends an HTTP request with the api key (if a vibez route was determined to be the host).
-    @within VibezLightweight
-    @private
+	Sends an HTTP request with the api key (if a vibez route was determined to be the host).
+	@within VibezLightweight
+	@return BaseHttpResponse
+	@private
 ]=]
 function Class._sendHttpRequest<T>(
 	self: VibezLightweightKind,
@@ -104,7 +105,7 @@ end
 
 --[=[
 	Fetches the group associated with the api key.
-	@return number | -1
+	@return number
 
 	@yields
 	@within VibezLightweight
@@ -128,7 +129,7 @@ end
 	@param self VibezLightweight
 	@param User Player | string | number
 	@param whoCalled { userName: string, userId: number }?
-	@return rankResponse
+	@return SetRankResponse
 
 	@yields
 	@within VibezLightweight
@@ -535,16 +536,13 @@ end
 --[=[
 	Deletes a blacklist from your api key.
 	@param userToDelete (Player string | number)
-	@return blacklistResponse
+	@return BlacklistResponse | InfoResponse
 
 	@within VibezLightweight
 	@since 0.6.0
 ]=]
 ---
-function Class.deleteBlacklist(
-	self: VibezLightweightKind,
-	userToDelete: Player | string | number
-): Definitions.BooleanResponse
+function Class.deleteBlacklist(self: VibezLightweightKind, userToDelete: Player | string | number): boolean
 	if not userToDelete then
 		-- An invalid user was supplied.
 		return false
@@ -563,7 +561,7 @@ end
 --[=[
 	Gets either a full list of blacklists or checks if a player is currently blacklisted.
 	@param userId (string | number | Player)?
-	@return blacklistResponse
+	@return BlacklistResponse | UserBlacklistResponse
 
 	@within VibezLightweight
 	@since 0.6.0
@@ -622,7 +620,7 @@ end
 	Uses roblox's group service to get a player's rank.
 	@param groupId number
 	@param userId number
-	@return { Rank: number?, Role: string?, Id: number?, errMessage: string? }
+	@return Result<{ Rank: number?, Role: string?, Id: number?, errMessage: string? }, string>
 
 	@yields
 	@private
