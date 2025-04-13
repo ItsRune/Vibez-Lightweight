@@ -29,21 +29,23 @@ export type FetchUserActivityResponse = {
 export type SetRankResponse = {
 	success: boolean,
 	message: string?,
-	newRank: {
-		id: number,
-		name: string,
-		rank: number,
-		memberCount: number,
-	},
-	oldRank: {
-		id: number,
-		name: string,
-		rank: number,
-		groupInformation: {
+	data: {
+		newRank: {
 			id: number,
 			name: string,
+			rank: number,
 			memberCount: number,
-			hasVerifiedBadge: boolean,
+		},
+		oldRank: {
+			id: number,
+			name: string,
+			rank: number,
+			groupInformation: {
+				id: number,
+				name: string,
+				memberCount: number,
+				hasVerifiedBadge: boolean,
+			},
 		},
 	},
 }
@@ -83,7 +85,7 @@ return nil
 	@within Ranking
 ]=]
 --[=[
-	@type SetRankResponse {success: boolean,message: string?,newRank: {id: number,name: string,rank: number,memberCount: number,},oldRank: {id: number,name: string,rank: number,groupInformation: {id: number,name: string,memberCount: number,hasVerifiedBadge: boolean}}}
+	@type SetRankResponse {success: boolean,message: string?,data:{newRank: {id: number,name: string,rank: number,memberCount: number,},oldRank: {id: number,name: string,rank: number,groupInformation: {id: number,name: string,memberCount: number,hasVerifiedBadge: boolean}}}}
 	@within Ranking
 ]=]
 

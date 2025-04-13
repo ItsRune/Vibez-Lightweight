@@ -1,8 +1,28 @@
 --!strict
 --[=[
-    @class Ranking
-    A lightweight module to handle all requests sent to https://vibez.dev/
+	@class Ranking
+	A lightweight module to handle all requests sent to https://vibez.dev/
 ]=]
+--[=[
+	@prop GroupId Number
+	@within Ranking
+]=]
+--[=[
+	@prop _key string
+	@private
+	@within Ranking
+]=]
+--[=[
+	@prop _origin string
+	@private
+	@within Ranking
+]=]
+--[=[
+	@prop _requestCaches { [string]: any }
+	@private
+	@within Ranking
+]=]
+
 local GroupService = game:GetService("GroupService")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
@@ -16,7 +36,7 @@ local Class = {}
 
 Class.__index = Class
 
-type Public = { _key: string, GroupId: number, requestCaches: { [string]: any } }
+type Public = { _key: string, _origin: string, _requestCaches: { [string]: any }, GroupId: number }
 type Private = typeof(Class)
 export type VibezRankingKind = typeof(setmetatable({} :: Public, {} :: Private))
 
@@ -35,10 +55,11 @@ end
 	@within Ranking
 ]=]
 function Vibez.new(apiKey: string): VibezRankingKind
-	local self = setmetatable({}, Class)
+	local self = setmetatable({}, Class) :: VibezRankingKind
 
 	self._key = apiKey
-	self.requestCaches = { groupInfo = {} }
+	self._origin = game:GetFullName()
+	self._requestCaches = { groupInfo = {} }
 	self.GroupId = self:getGroupId()
 
 	if self.GroupId == -1 then
@@ -76,15 +97,19 @@ function Class._sendHttpRequest<T>(
 		body = nil
 	end
 
-	local isOk, bodyJson = pcall(HttpService.JSONEncode, HttpService, body)
-	if not isOk and body ~= nil then
-		return Result.err("Invalid request body!")
-	end
-
 	if string.match(route, "http") == nil then
 		route = "https://leina.vibez.dev" .. route
 	else
 		heads["x-api-key"] = nil :: any
+	end
+
+	if string.match(route, "leina.vibez") ~= nil and typeof(body) == "table" then
+		body.origin = `{self._origin}{RunService:IsStudio() and " (Studio Play-Test)" or ""}`
+	end
+
+	local isOk, bodyJson = pcall(HttpService.JSONEncode, HttpService, body)
+	if not isOk and body ~= nil then
+		return Result.err("Invalid request body!")
 	end
 
 	local Options = {
@@ -651,8 +676,8 @@ function Class._getGroupFromUser(
 	force: boolean?,
 	useOverride: boolean?
 ): Result.Result<{ Rank: number, Role: string, Id: number }, string>
-	if self.requestCaches.groupInfo[userId] ~= nil and not force then
-		return self.requestCaches.groupInfo[userId]
+	if self._requestCaches.groupInfo[userId] ~= nil and not force then
+		return self._requestCaches.groupInfo[userId]
 	end
 
 	if RunService:IsStudio() and useOverride then
@@ -675,7 +700,7 @@ function Class._getGroupFromUser(
 	end
 
 	if typeof(found) == "table" then
-		self.requestCaches.groupInfo[userId] = found
+		self._requestCaches.groupInfo[userId] = found
 		return found
 	end
 
@@ -822,6 +847,21 @@ function Class._getRoleIdFromRank(self: VibezRankingKind, rank: number | string)
 	end
 
 	return nil
+end
+
+--[=[
+	@method setLoggingOriginationText
+	When triggering any method within this module, a header called 'origin' is sent to describe where the method took place in. (Default is the name of your game)
+	@param rank number | string
+	@return number?
+
+	@yields
+	@private
+	@within Ranking
+]=]
+---
+function Class.setLoggingOriginationText(self: VibezRankingKind, text: string): ()
+	self._origin = tostring(text)
 end
 
 return Vibez
