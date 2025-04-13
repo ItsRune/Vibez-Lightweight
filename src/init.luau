@@ -785,7 +785,7 @@ end
 	@within Ranking
 ]=]
 ---
-function Class._getUserIdByName(self: VibezRankingKind, username: string): number
+function Class._getUserIdByName(_self: VibezRankingKind, username: string): number
 	local isOk, userId = pcall(Players.GetUserIdFromNameAsync, Players, username)
 	return isOk and userId or -1
 end
@@ -801,7 +801,7 @@ end
 	@within Ranking
 ]=]
 ---
-function Class._getNameById(self: VibezRankingKind, userId: number): string
+function Class._getNameById(_self: VibezRankingKind, userId: number): string
 	local fixedUserId = tonumber(userId)
 	if not fixedUserId then
 		return tostring(userId)

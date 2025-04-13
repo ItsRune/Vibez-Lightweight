@@ -1,8 +1,9 @@
 --!strict
+--#selene: allow(unused_variable)
 -- https://doc.rust-lang.org/std/result/enum.Result.html
 -- Services
 -- Packages
-local Option = require(script.Parent:WaitForChild('Option'))-- Modules
+local Option = require(script.Parent:WaitForChild("Option")) -- Modules
 -- Types
 
 type Option<V> = Option.Option<V>
@@ -24,14 +25,14 @@ type ResultImpl<V, E> = {
 	unwrapErr: (self: Result<V, E>) -> E,
 	unwrapOr: (self: Result<V, E>, alt: V) -> V,
 	unwrapOrElse: (self: Result<V, E>, fn: () -> V) -> V,
-	expect: (self: Result<V, E>, msg: string) -> V
+	expect: (self: Result<V, E>, msg: string) -> V,
 }
 export type Result<V, E> = typeof(setmetatable(
 	{} :: {
 		_state: string, --State, --replaced for performance reasons
 		_ok: V?,
-		_err: E?	
-},
+		_err: E?,
+	},
 	{} :: ResultImpl<V, E>
 ))
 
