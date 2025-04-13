@@ -1,0 +1,4 @@
+{
+    "luau-lsp.fflags.enableNewSolver": false,
+    "luau-lsp.plugin.enabled": true
+}

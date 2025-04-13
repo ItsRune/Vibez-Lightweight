@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[897],{4410:s=>{s.exports=JSON.parse('{"sourceUrl":"https://github.com/ItsRune/Vibez-Ranking/blob/master","baseUrl":"/Vibez-Ranking/","classOrder":["Ranking","Result"],"apiCategories":[]}')}}]);
