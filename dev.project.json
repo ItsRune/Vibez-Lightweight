@@ -1,0 +1,16 @@
+{
+    "name": "VibezRanking",
+    "tree": {
+        "$className": "DataModel",
+
+        "ServerScriptService": {
+            "$ignoreUnknownInstances": true,
+            "VibezRanking": {
+                "$path": "src",
+                "Packages": {
+                    "$path": "Packages"
+                }
+            }
+        }
+    }
+}

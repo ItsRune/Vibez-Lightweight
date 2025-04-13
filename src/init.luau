@@ -1,6 +1,6 @@
 --!strict
 --[=[
-    @class VibezRanking
+    @class Ranking
     A lightweight module to handle all requests sent to https://vibez.dev/
 ]=]
 local GroupService = game:GetService("GroupService")
@@ -8,9 +8,8 @@ local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
-local Packages = script.Packages
 local Definitions = require(script.Definitions)
-local Result = require(Packages.Result)
+local Result = require(script.Packages.Result)
 
 local Vibez = {}
 local Class = {}
@@ -25,7 +24,7 @@ export type VibezLightweightKind = typeof(setmetatable({} :: Public, {} :: Priva
 	@ignore
 	@function unpackResult
 	Unpacks a result value into a usable return value.
-	@within VibezRanking
+	@within Ranking
 ]=]
 local function unpackResult<T, E>(result: Result.Result<T, E>): T | E
 	return result:isOk() and result:unwrap() or result:unwrapErr()
@@ -33,7 +32,7 @@ end
 
 --[=[
 	Constructor method
-	@within VibezRanking
+	@within Ranking
 ]=]
 function Vibez.new(apiKey: string): VibezLightweightKind
 	local self = setmetatable({}, Class)
@@ -52,8 +51,9 @@ function Vibez.new(apiKey: string): VibezLightweightKind
 end
 
 --[=[
+	@method _sendHttpRequest
 	Sends an HTTP request with the api key (if a vibez route was determined to be the host).
-	@within VibezRanking
+	@within Ranking
 	@return BaseHttpResponse
 	@private
 ]=]
@@ -104,11 +104,12 @@ function Class._sendHttpRequest<T>(
 end
 
 --[=[
+	@method getGroupId
 	Fetches the group associated with the api key.
 	@return number
 
 	@yields
-	@within VibezRanking
+	@within Ranking
 ]=]
 ---
 function Class.getGroupId(self: VibezLightweightKind): number
@@ -125,14 +126,15 @@ function Class.getGroupId(self: VibezLightweightKind): number
 end
 
 --[=[
+	@method setRank
 	Sets the rank of a player and `whoCalled` (Optional) is used for logging purposes.
-	@param self VibezLightweight
+	@param self Ranking
 	@param User Player | string | number
 	@param whoCalled { userName: string, userId: number }?
 	@return SetRankResponse
 
 	@yields
-	@within VibezRanking
+	@within Ranking
 ]=]
 ---
 function Class.setRank(
@@ -175,14 +177,15 @@ function Class.setRank(
 end
 
 --[=[
+	@method Promote
 	Promotes a player and `whoCalled` (Optional) is used for logging purposes.
-	@param self VibezLightweight
+	@param self Ranking
 	@param User Player | string | number
 	@param whoCalled { userName: string, userId: number }?
 	@return rankResponse
 
 	@yields
-	@within VibezRanking
+	@within Ranking
 ]=]
 ---
 function Class.Promote(
@@ -220,14 +223,15 @@ function Class.Promote(
 end
 
 --[=[
+	@method Demote
 	Demotes a player and `whoCalled` (Optional) is used for logging purposes.
-	@param self VibezLightweight
+	@param self Ranking
 	@param User Player | string | number
 	@param whoCalled { userName: string, userId: number }?
 	@return rankResponse
 
 	@yields
-	@within VibezRanking
+	@within Ranking
 ]=]
 ---
 function Class.Demote(
@@ -269,14 +273,15 @@ function Class.Demote(
 end
 
 --[=[
+	@method Fire
 	Fires a player and `whoCalled` (Optional) is used for logging purposes.
-	@param self VibezLightweight
+	@param self Ranking
 	@param User Player | string | number
 	@param whoCalled { userName: string, userId: number }?
 	@return rankResponse
 
 	@yields
-	@within VibezRanking
+	@within Ranking
 ]=]
 ---
 function Class.Fire(
@@ -312,12 +317,13 @@ function Class.Fire(
 end
 
 --[=[
+	@method getActivity
 	Gets a player's or everyone's current activity
 	@param User Player | string | number
 	@param sorted boolean? -- Only when fetching all user activities.
 	@return activityResponse
 
-	@within VibezRanking
+	@within Ranking
 	@since 0.3.0
 ]=]
 ---
@@ -368,12 +374,13 @@ function Class.getActivity(
 end
 
 --[=[
+	@method removeActivity
 	Negates the player's activity seconds & message counts. (Does not clear detail logs array.)
 	@param User Player | string | number
 	@return boolean
 
 	@yields
-	@within VibezRanking
+	@within Ranking
 	@since 0.11.0
 ]=]
 ---
@@ -412,6 +419,7 @@ function Class.removeActivity(
 end
 
 --[=[
+	@method saveActivity
 	Saves the player's current activity
 	@param User Player | string | number
 	@param userRank number
@@ -421,7 +429,7 @@ end
 	@return httpResponse
 
 	@yields
-	@within VibezRanking
+	@within Ranking
 	@since 0.3.0
 ]=]
 ---
@@ -487,13 +495,14 @@ function Class.saveActivity(
 end
 
 --[=[
+	@method addBlacklist
 	Adds a blacklist to your api key.
 	@param userToBlacklist (Player string | number)
 	@param Reason string?
 	@param blacklistExecutedBy (Player string | number)?
 	@return blacklistResponse
 
-	@within VibezRanking
+	@within Ranking
 	@since 0.6.0
 ]=]
 ---
@@ -502,15 +511,12 @@ function Class.addBlacklist(
 	userToBlacklist: Player | string | number,
 	Reason: string?,
 	blacklistExecutedBy: Player | string | number
-): Definitions.BlacklistResponse
+): (boolean, string)
 	local userId, reason, blacklistedBy =
 		nil, (typeof(Reason) ~= "string" or Reason == "") and "Unknown." or Reason, nil
 
 	if not userToBlacklist then
-		return {
-			success = false,
-			message = "An invalid user was supplied.",
-		} :: any
+		return false, "Invalid user was supplied."
 	elseif not blacklistExecutedBy then
 		blacklistExecutedBy = -1
 	end
@@ -524,46 +530,50 @@ function Class.addBlacklist(
 	})
 
 	if response:isErr() then
-		return {
-			success = false,
-			message = response:unwrapErr(),
-		} :: any
+		return false, response:unwrapErr()
 	end
 
-	return response:unwrap().Body
+	local unwrapped = response:unwrap()
+	if not unwrapped.Success or not unwrapped.Body.success then
+		return false, unwrapped.Body.message or "Internal server error."
+	end
+
+	return true, unwrapped.Body.message
 end
 
 --[=[
+	@method deleteBlacklist
 	Deletes a blacklist from your api key.
 	@param userToDelete (Player string | number)
 	@return BlacklistResponse | InfoResponse
 
-	@within VibezRanking
+	@within Ranking
 	@since 0.6.0
 ]=]
 ---
-function Class.deleteBlacklist(self: VibezLightweightKind, userToDelete: Player | string | number): boolean
+function Class.deleteBlacklist(self: VibezLightweightKind, userToDelete: Player | string | number): (boolean, string)
 	if not userToDelete then
 		-- An invalid user was supplied.
-		return false
+		return false, "Invalid user was supplied."
 	end
 
 	local userId = self:_verifyUser(userToDelete, "UserId")
 	local response = self:_sendHttpRequest(`/blacklists/{userId}`, "delete")
 
 	if response:isErr() then
-		return false
+		return false, response:unwrapErr()
 	end
 
-	return true
+	return true, response:unwrap().Body.message
 end
 
 --[=[
+	@method getBlacklists
 	Gets either a full list of blacklists or checks if a player is currently blacklisted.
 	@param userId (string | number | Player)?
 	@return BlacklistResponse | UserBlacklistResponse
 
-	@within VibezRanking
+	@within Ranking
 	@since 0.6.0
 ]=]
 ---
@@ -581,17 +591,24 @@ function Class.getBlacklists(
 		} :: any
 	end
 
-	warn(response)
 	local unwrapped = response:unwrap()
+	if not unwrapped.Success or not unwrapped.Body.success then
+		return unwrapped.Body
+	elseif unwrapped.Body.blacklists ~= nil then
+		return unwrapped.Body.blacklists
+	end
+
+	unwrapped.Body.success = nil
 	return unwrapped.Body
 end
 
 --[=[
+	@method isUserBlacklisted
 	Gets either a full list of blacklists or checks if a player is currently blacklisted.
 	@param User Player | string | number
 	@return (boolean, string?, string?)
 
-	@within VibezRanking
+	@within Ranking
 	@since 0.6.0
 ]=]
 ---
@@ -617,6 +634,7 @@ function Class.isUserBlacklisted(self: VibezLightweightKind, User: Player | stri
 end
 
 --[=[
+	@method _getGroupFromUser
 	Uses roblox's group service to get a player's rank.
 	@param groupId number
 	@param userId number
@@ -624,7 +642,7 @@ end
 
 	@yields
 	@private
-	@within VibezRanking
+	@within Ranking
 	@since 0.1.0
 ]=]
 ---
@@ -685,14 +703,15 @@ function Class._getGroupFromUser(
 end
 
 --[=[
+	@method _verifyUser
 	Ensures that the parameter returns the proper type associated to the `typeToReturn`
-	@param self VibezLightweight
+	@param self Ranking
 	@param User Player | number | string
 	@param typeToReturn "UserId" | "Player" | "Name"
 	@return number | string | Player
 
 	@private
-	@within VibezRanking
+	@within Ranking
 ]=]
 function Class._verifyUser(
 	self: VibezLightweightKind,
@@ -729,13 +748,14 @@ function Class._verifyUser(
 end
 
 --[=[
+	@method _getUserIdByName
 	Gets a player's user identifier via their username.
 	@param username string
 	@return number?
 
 	@yields
 	@private
-	@within VibezRanking
+	@within Ranking
 ]=]
 ---
 function Class._getUserIdByName(self: VibezLightweightKind, username: string): number
@@ -744,13 +764,14 @@ function Class._getUserIdByName(self: VibezLightweightKind, username: string): n
 end
 
 --[=[
+	@method _getNameById
 	Gets a player's username by their userId
 	@param userId number
 	@return string?
 
 	@yields
 	@private
-	@within VibezRanking
+	@within Ranking
 ]=]
 ---
 function Class._getNameById(self: VibezLightweightKind, userId: number): string
@@ -764,13 +785,14 @@ function Class._getNameById(self: VibezLightweightKind, userId: number): string
 end
 
 --[=[
+	@method _getRoleIdFromRank
 	Gets the role id of a rank.
 	@param rank number | string
 	@return number?
 
 	@yields
 	@private
-	@within VibezRanking
+	@within Ranking
 ]=]
 ---
 function Class._getRoleIdFromRank(self: VibezLightweightKind, rank: number | string): number?
