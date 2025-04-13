@@ -89,7 +89,9 @@ function Class._sendHttpRequest<T>(
 	method = typeof(method) == "string" and string.upper(method) or "GET"
 
 	local heads = headers or { ["Content-Type"] = "application/json" }
-	heads["x-api-key"] = self._key
+	if heads["x-api-key"] == nil then
+		heads["x-api-key"] = self._key
+	end
 
 	if not body and method ~= "GET" and method ~= "HEAD" then
 		body = {}
@@ -131,18 +133,21 @@ end
 --[=[
 	@method getGroupId
 	Fetches the group associated with the api key.
+	@param overrideKey string?
 	@return number
 
 	@yields
 	@within Ranking
 ]=]
 ---
-function Class.getGroupId(self: VibezRankingKind): number
+function Class.getGroupId(self: VibezRankingKind, overrideKey: string?): number
 	if self.GroupId ~= nil and self.GroupId ~= -1 then
 		return self.GroupId
 	end
 
-	local result = self:_sendHttpRequest("/ranking/groupid", "post")
+	local result = self:_sendHttpRequest("/ranking/groupid", "post", {
+		["x-api-key"] = overrideKey or self._key,
+	})
 	if result:isErr() then
 		return -1
 	end
@@ -677,7 +682,7 @@ function Class._getGroupFromUser(
 	useOverride: boolean?
 ): Result.Result<{ Rank: number, Role: string, Id: number }, string>
 	if self._requestCaches.groupInfo[userId] ~= nil and not force then
-		return self._requestCaches.groupInfo[userId]
+		return Result.ok(self._requestCaches.groupInfo[userId])
 	end
 
 	if RunService:IsStudio() and useOverride then
@@ -701,7 +706,7 @@ function Class._getGroupFromUser(
 
 	if typeof(found) == "table" then
 		self._requestCaches.groupInfo[userId] = found
-		return found
+		return Result.ok(found)
 	end
 
 	if possiblePlayer ~= nil then
