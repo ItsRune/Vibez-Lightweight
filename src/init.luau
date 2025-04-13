@@ -18,7 +18,7 @@ Class.__index = Class
 
 type Public = { _key: string, GroupId: number, requestCaches: { [string]: any } }
 type Private = typeof(Class)
-export type VibezLightweightKind = typeof(setmetatable({} :: Public, {} :: Private))
+export type VibezRankingKind = typeof(setmetatable({} :: Public, {} :: Private))
 
 --[=[
 	@ignore
@@ -34,7 +34,7 @@ end
 	Constructor method
 	@within Ranking
 ]=]
-function Vibez.new(apiKey: string): VibezLightweightKind
+function Vibez.new(apiKey: string): VibezRankingKind
 	local self = setmetatable({}, Class)
 
 	self._key = apiKey
@@ -58,7 +58,7 @@ end
 	@private
 ]=]
 function Class._sendHttpRequest<T>(
-	self: VibezLightweightKind,
+	self: VibezRankingKind,
 	route: string,
 	method: string?,
 	headers: { [string]: any }?,
@@ -112,7 +112,7 @@ end
 	@within Ranking
 ]=]
 ---
-function Class.getGroupId(self: VibezLightweightKind): number
+function Class.getGroupId(self: VibezRankingKind): number
 	if self.GroupId ~= nil and self.GroupId ~= -1 then
 		return self.GroupId
 	end
@@ -138,7 +138,7 @@ end
 ]=]
 ---
 function Class.setRank(
-	self: VibezLightweightKind,
+	self: VibezRankingKind,
 	User: Player | string | number,
 	rankId: string | number,
 	whoCalled: { userName: string, userId: number }?
@@ -189,7 +189,7 @@ end
 ]=]
 ---
 function Class.Promote(
-	self: VibezLightweightKind,
+	self: VibezRankingKind,
 	User: Player | string | number,
 	whoCalled: { userName: string, userId: number }?
 ): Definitions.SetRankResponse
@@ -235,7 +235,7 @@ end
 ]=]
 ---
 function Class.Demote(
-	self: VibezLightweightKind,
+	self: VibezRankingKind,
 	User: Player | string | number,
 	whoCalled: { userName: string, userId: number }?
 ): Definitions.SetRankResponse | Definitions.Error
@@ -285,7 +285,7 @@ end
 ]=]
 ---
 function Class.Fire(
-	self: VibezLightweightKind,
+	self: VibezRankingKind,
 	User: Player | string | number,
 	whoCalled: { userName: string, userId: number }?
 ): boolean
@@ -328,7 +328,7 @@ end
 ]=]
 ---
 function Class.getActivity(
-	self: VibezLightweightKind,
+	self: VibezRankingKind,
 	User: Player | string | number,
 	sorted: boolean?
 ): Definitions.FetchUserActivityResponse
@@ -385,7 +385,7 @@ end
 ]=]
 ---
 function Class.removeActivity(
-	self: VibezLightweightKind,
+	self: VibezRankingKind,
 	User: Player | string | number
 ): Definitions.SaveUserActivityResponse | Definitions.InfoResponse
 	local userId = self:_verifyUser(User, "UserId") :: number
@@ -434,7 +434,7 @@ end
 ]=]
 ---
 function Class.saveActivity(
-	self: VibezLightweightKind,
+	self: VibezRankingKind,
 	User: Player | string | number,
 	userRank: number,
 	secondsSpent: number?,
@@ -507,7 +507,7 @@ end
 ]=]
 ---
 function Class.addBlacklist(
-	self: VibezLightweightKind,
+	self: VibezRankingKind,
 	userToBlacklist: Player | string | number,
 	Reason: string?,
 	blacklistExecutedBy: Player | string | number
@@ -551,7 +551,7 @@ end
 	@since 0.6.0
 ]=]
 ---
-function Class.deleteBlacklist(self: VibezLightweightKind, userToDelete: Player | string | number): (boolean, string)
+function Class.deleteBlacklist(self: VibezRankingKind, userToDelete: Player | string | number): (boolean, string)
 	if not userToDelete then
 		-- An invalid user was supplied.
 		return false, "Invalid user was supplied."
@@ -577,10 +577,7 @@ end
 	@since 0.6.0
 ]=]
 ---
-function Class.getBlacklists(
-	self: VibezLightweightKind,
-	userId: (string | number | Player)?
-): Definitions.BlacklistResponse
+function Class.getBlacklists(self: VibezRankingKind, userId: (string | number | Player)?): Definitions.BlacklistResponse
 	userId = (userId ~= nil) and self:_verifyUser(userId, "UserId") or ""
 	local response = self:_sendHttpRequest(`/blacklists/{userId}`)
 
@@ -612,7 +609,7 @@ end
 	@since 0.6.0
 ]=]
 ---
-function Class.isUserBlacklisted(self: VibezLightweightKind, User: Player | string | number): ...any
+function Class.isUserBlacklisted(self: VibezRankingKind, User: Player | string | number): ...any
 	local userId = self:_verifyUser(User, "Id")
 	local blacklistData = self:getBlacklists(userId)
 
@@ -648,7 +645,7 @@ end
 ---
 --stylua: ignore
 function Class._getGroupFromUser(
-	self: VibezLightweightKind,
+	self: VibezRankingKind,
 	groupId: number,
 	userId: number,
 	force: boolean?,
@@ -714,7 +711,7 @@ end
 	@within Ranking
 ]=]
 function Class._verifyUser(
-	self: VibezLightweightKind,
+	self: VibezRankingKind,
 	User: Player | number | string,
 	typeToReturn: "UserId" | "Player" | "Name" | "Id"
 ): Player | number | string
@@ -758,7 +755,7 @@ end
 	@within Ranking
 ]=]
 ---
-function Class._getUserIdByName(self: VibezLightweightKind, username: string): number
+function Class._getUserIdByName(self: VibezRankingKind, username: string): number
 	local isOk, userId = pcall(Players.GetUserIdFromNameAsync, Players, username)
 	return isOk and userId or -1
 end
@@ -774,7 +771,7 @@ end
 	@within Ranking
 ]=]
 ---
-function Class._getNameById(self: VibezLightweightKind, userId: number): string
+function Class._getNameById(self: VibezRankingKind, userId: number): string
 	local fixedUserId = tonumber(userId)
 	if not fixedUserId then
 		return tostring(userId)
@@ -795,7 +792,7 @@ end
 	@within Ranking
 ]=]
 ---
-function Class._getRoleIdFromRank(self: VibezLightweightKind, rank: number | string): number?
+function Class._getRoleIdFromRank(self: VibezRankingKind, rank: number | string): number?
 	-- Don't use normal HTTP function, it'll send the api key.
 	local url = `https://groups.roproxy.com/v1/groups/{self.GroupId}/roles`
 	local isOk, response = pcall(HttpService.GetAsync, HttpService, url)
