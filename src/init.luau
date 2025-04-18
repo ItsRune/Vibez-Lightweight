@@ -51,10 +51,13 @@ local function unpackResult<T, E>(result: Result.Result<T, E>): T | E
 end
 
 --[=[
-	Constructor method
+	Constructs a new Vibez wrapper with the specified key.
 	@within Ranking
+	@return Ranking
 ]=]
 function Vibez.new(apiKey: string): VibezRankingKind
+	assert(typeof(apiKey) == "string", "Vibez Error: API Key must be a string!")
+
 	local self = setmetatable({}, Class) :: VibezRankingKind
 
 	self._key = apiKey
