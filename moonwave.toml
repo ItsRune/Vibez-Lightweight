@@ -1,2 +1,6 @@
-title="Vibez Ranking"
-classOrder=["Ranking","Result"]
+title = "Vibez Ranking"
+classOrder = ["Ranking","Result"]
+gitRepoUrl = "https://github.com/ItsRune/Vibez-Ranking"
+
+[docusaurus]
+favicon = "https://github.com/ItsRune/VibezAPI/blob/903c060edf6b7982f6c04bc68626f07c2a653255/.moonwave/static/favicon.png?raw=true"
