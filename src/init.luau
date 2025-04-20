@@ -30,13 +30,20 @@ local RunService = game:GetService("RunService")
 
 local Definitions = require(script.Definitions)
 local Result = require(script.Packages.Result)
+local RateLimit = require(script.RateLimit)
 
 local Vibez = {}
 local Class = {}
 
 Class.__index = Class
 
-type Public = { _key: string, _origin: string, _requestCaches: { [string]: any }, GroupId: number }
+type Public = {
+	_key: string,
+	_origin: string,
+	_requestCaches: { [string]: any },
+	GroupId: number,
+	_limiter: RateLimit.RateLimitKind,
+}
 type Private = typeof(Class)
 export type VibezRankingKind = typeof(setmetatable({} :: Public, {} :: Private))
 
@@ -63,6 +70,7 @@ function Vibez.new(apiKey: string): VibezRankingKind
 	self._key = apiKey
 	self._origin = game:GetFullName()
 	self._requestCaches = { groupInfo = {} }
+	self._limiter = RateLimit.new(60, 60)
 	self.GroupId = self:getGroupId()
 
 	if self.GroupId == -1 then
@@ -88,6 +96,24 @@ function Class._sendHttpRequest<T>(
 	headers: { [string]: any }?,
 	body: { [any]: any }?
 ): Definitions.BaseHttpResponse
+	local canContinue, err = self._limiter:Check()
+	if not canContinue then
+		local message = `You are being rate limited! {tostring(err)}`
+		return Result.err({
+			Success = false,
+			StatusCode = 429,
+			StatusMessage = message,
+			rawBody = "{}",
+			Headers = {
+				["Content-Type"] = "application/json",
+			},
+			Body = {
+				success = false,
+				errorMessage = message,
+			},
+		})
+	end
+
 	route = string.sub(route, 1, 1) == "/" and route or "/" .. route
 	method = typeof(method) == "string" and string.upper(method) or "GET"
 
