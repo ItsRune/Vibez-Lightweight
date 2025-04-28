@@ -672,21 +672,13 @@ function Class.isUserBlacklisted(self: VibezRankingKind, User: Player | string |
 	local userId = self:_verifyUser(User, "Id")
 	local blacklistData = self:getBlacklists(userId)
 
-	if not blacklistData.success then
-		return blacklistData
-	end
+	local data: { any } = {
+		blacklistData.isBlacklisted,
+		blacklistData.details.reason,
+		blacklistData.details.blacklistedBy,
+	}
 
-	if blacklistData.success then
-		local data = {
-			blacklistData.data.blacklisted,
-			blacklistData.data.reason,
-			blacklistData.data.blacklistedBy,
-		}
-
-		return table.unpack(data)
-	end
-
-	return false, nil, nil
+	return table.unpack(data)
 end
 
 --[=[

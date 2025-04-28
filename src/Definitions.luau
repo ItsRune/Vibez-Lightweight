@@ -4,7 +4,10 @@ export type Error = string | Result.Result<any, string>
 export type BaseHttpResponse = Result.Result<any, any>
 export type InfoResponse = { success: boolean, message: string }
 export type GroupIdResponse = number
-export type BlacklistResponse = { success: boolean, data: { [string]: any } }
+export type BlacklistResponse = {
+	isBlacklisted: boolean,
+	details: { reason: string?, blacklisted: boolean?, blacklistedBy: string? },
+}
 export type UserBlacklistResponse = InfoResponse
 export type SaveUserActivityResponse = {
 	detailedLogs: { { timestampLeftAt: number, secondsUserHasSpent: number, messagesUserHasSent: number }? },
