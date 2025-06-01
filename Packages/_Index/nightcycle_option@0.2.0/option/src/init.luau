@@ -19,14 +19,14 @@ type OptionImpl<V> = {
 	unwrap: (self: Option<V>) -> V,
 	unwrapOr: (self: Option<V>, alt: V) -> V,
 	unwrapOrElse: (self: Option<V>, fn: () -> V) -> V,
-	expect: (self: Option<V>, msg: string) -> V
+	expect: (self: Option<V>, msg: string) -> V,
 }
 
 export type Option<V> = typeof(setmetatable(
 	{} :: {
 		_state: string, --"N" | "S", --replaced for performance reasons
-		_value: V?	
-},
+		_value: V?,
+	},
 	{} :: OptionImpl<V>
 ))
 

@@ -150,8 +150,8 @@ function Class._sendHttpRequest<T>(
 		Body = (body ~= nil) and bodyJson or nil,
 	}
 
-	local wasOk, response = pcall(HttpService.RequestAsync, HttpService, Options :: any)
-	if wasOk and response.Success then
+	local _, response = pcall(HttpService.RequestAsync, HttpService, Options :: any)
+	if response and response.Body then
 		local newOk, responseJson = pcall(HttpService.JSONDecode, HttpService, response.Body :: any)
 		response.Body = newOk and responseJson or response.Body
 	end
